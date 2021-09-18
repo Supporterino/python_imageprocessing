@@ -41,8 +41,7 @@ def image_resize(image, width = None, height = None, inter = cv2.INTER_AREA):
 
 
 class Image:
-    def __init__(self, filename, time=500, size=500):
-        self.size = size
+    def __init__(self, filename, time=500):
         self.time = time
         self.shifted = 0.0
         self.img = cv2.imread(filename)
@@ -90,14 +89,11 @@ class Image:
         return roi
 
 
-def process():
-    path = "pics"
-    filenames = glob.glob(os.path.join(path, "*"))
-
+def process(files_to_process, out_file):
     images = []
     frames_out = []
 
-    for filename in filenames:
+    for filename in files_to_process:
         print(filename)
 
         img = Image(filename)
@@ -115,18 +111,18 @@ def process():
             beta = 1.0 - alpha
             dst = cv2.addWeighted(img.get_frame(), alpha, prev_image.get_frame(), beta, 0.0)
 
-            #cv2.imshow("Slide", dst)
             frames_out.append(dst)
-            #if cv2.waitKey(1) == ord('q'):
-            #    return
 
         prev_image = img
         for _ in range(100):
-            #cv2.imshow("Slide", img.get_frame())
             frames_out.append(img.get_frame())
-            #if cv2.waitKey(1) == ord('q'):
-            #    return
     
-    write('hd.mp4', frames_out)
+    write(out_file, frames_out)
 
-process()
+
+path = "/mnt/ssd/python_imageprocessing/2x"
+out_path = "/mnt/ssd/python_imageprocessing/output"
+
+files = [f for f in listdir(path) if isfile(join(path, f))]
+
+process(files, join(out_path, 'hd_try.mp4'))
