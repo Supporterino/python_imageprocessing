@@ -3,7 +3,7 @@
 from os import listdir, rename
 from os.path import join, isfile
 
-path = "/mnt/ssd/alisa_photos/pngify"
+path = "/mnt/ssd/python_imageprocessing/pngify"
 
 files = [f for f in listdir(path) if isfile(join(path, f))]
 

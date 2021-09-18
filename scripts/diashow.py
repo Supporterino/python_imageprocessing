@@ -1,27 +1,30 @@
+#!/usr/bin/env python3
+
+from os import listdir
+from os.path import join, isfile
 import cv2
-import numpy as np
-import glob
-import os
 import random
 
 WIDTH = 1920
 HEIGHT = 1080
 
+
 def write(filename, frames):
-        out = None
+    out = None
 
-        try:
-            for frame in frames:
-                if not out:
-                    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-                    out = cv2.VideoWriter(filename, fourcc, 30, (WIDTH, HEIGHT))
+    try:
+        for frame in frames:
+            if not out:
+                fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+                out = cv2.VideoWriter(filename, fourcc, 30, (WIDTH, HEIGHT))
 
-                out.write(frame)
+            out.write(frame)
 
-        finally:
-            out and out.release()
+    finally:
+        out and out.release()
 
-def image_resize(image, width = None, height = None, inter = cv2.INTER_AREA):
+
+def image_resize(image, width=None, height=None, inter=cv2.INTER_AREA):
     dim = None
     (h, w) = image.shape[:2]
 
@@ -35,7 +38,7 @@ def image_resize(image, width = None, height = None, inter = cv2.INTER_AREA):
         r = width / float(w)
         dim = (width, int(h * r))
 
-    resized = cv2.resize(image, dim, interpolation = inter)
+    resized = cv2.resize(image, dim, interpolation=inter)
 
     return resized
 
@@ -89,16 +92,20 @@ class Image:
         return roi
 
 
-def process(files_to_process, out_file):
+def process(files_to_process, in_path, out_file):
     images = []
     frames_out = []
+    removed = 0
 
     for filename in files_to_process:
-        print(filename)
+        print(join(in_path, filename))
 
-        img = Image(filename)
+        img = Image(join(in_path, filename))
 
-        images.append(img)
+        if (img.shift >= 0):
+            images.append(img)
+        else:
+            removed += 1
 
     prev_image = images[random.randrange(0, len(images))]
     prev_image.reset()
@@ -109,14 +116,16 @@ def process(files_to_process, out_file):
         for i in range(50):
             alpha = i/50
             beta = 1.0 - alpha
-            dst = cv2.addWeighted(img.get_frame(), alpha, prev_image.get_frame(), beta, 0.0)
+            dst = cv2.addWeighted(img.get_frame(), alpha,
+                                  prev_image.get_frame(), beta, 0.0)
 
             frames_out.append(dst)
 
         prev_image = img
         for _ in range(100):
             frames_out.append(img.get_frame())
-    
+
+    print(f'Skipped {removed} images because of neg shift')
     write(out_file, frames_out)
 
 
@@ -125,4 +134,4 @@ out_path = "/mnt/ssd/python_imageprocessing/output"
 
 files = [f for f in listdir(path) if isfile(join(path, f))]
 
-process(files, join(out_path, 'hd_try.mp4'))
+process(files, path, join(out_path, 'hd_try.mp4'))
