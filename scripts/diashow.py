@@ -42,12 +42,30 @@ def image_resize(image, width=None, height=None, inter=cv2.INTER_AREA):
 
     return resized
 
+def make_16x9(im):
+    height, width, _ = im.shape
+
+    print(height, width)
+
+    desired_width = 16 * (height / 9)
+    delta_w = desired_width - width
+    delta_h = 0
+    top, bottom = 0, 0
+    left, right = int(delta_w/2) + 25, int(delta_w-(delta_w/2)) + 25
+
+    
+    print(top, bottom, left, right)
+    color = [0, 0, 0]
+    new_im = cv2.copyMakeBorder(im, top, bottom, left, right, cv2.BORDER_CONSTANT,
+        value=color)
+    
+    return new_im
 
 class Image:
     def __init__(self, filename, time=500):
         self.time = time
         self.shifted = 0.0
-        self.img = cv2.imread(filename)
+        self.img = make_16x9(cv2.imread(filename))
         self.height, self.width, _ = self.img.shape
         if self.width < self.height:
             print('Height bigger')
