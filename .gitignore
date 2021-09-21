@@ -134,3 +134,6 @@ pngify/
 unprocessed/
 corrupted/
 output/hd_try.mp4
+output/hd_without_shift.mp4
+output/hd_without_shift_and_rotatet.mp4
+output/final.mp4

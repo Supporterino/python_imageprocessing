@@ -102,11 +102,11 @@ class Image:
             roi = self.img[int(self.shifted):int(self.shifted) + HEIGHT, :, :]
         else:
             roi = self.img[:, int(self.shifted):int(self.shifted) + WIDTH, :]
-        self.shifted += self.delta_shift
-        if self.shifted > self.shift:
-            self.shifted = self.shift
-        if self.shifted < 0:
-            self.shifted = 0
+        # self.shifted += self.delta_shift
+        # if self.shifted > self.shift:
+        #     self.shifted = self.shift
+        # if self.shifted < 0:
+        #     self.shifted = 0
         return roi
 
 
@@ -152,4 +152,4 @@ out_path = "/mnt/ssd/python_imageprocessing/output"
 
 files = [f for f in listdir(path) if isfile(join(path, f))]
 
-process(files, path, join(out_path, 'hd_try.mp4'))
+process(files, path, join(out_path, 'final.mp4'))
